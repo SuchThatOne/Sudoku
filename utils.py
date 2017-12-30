@@ -177,3 +177,8 @@ def search(values):
         attempt = search(new_sudoku)
         if attempt:
             return attempt
+
+def dict2chars(values):
+    
+    string = values['A1'] + values['A2'] + values['A3'] + values['A4'] + values['A5'] + values['A6'] + values['A7'] + values['A8'] + values['A9'] + values['B1'] + values['B2'] + values['B3'] + values['B4'] + values['B5'] + values['B6'] + values['B7'] + values['B8'] + values['B9'] + values['C1'] + values['C2'] + values['C3'] + values['C4'] + values['C5'] + values['C6'] + values['C7'] + values['C8'] + values['C9'] + values['D1'] + values['D2'] + values['D3'] + values['D4'] + values['D5'] + values['D6'] + values['D7'] + values['D8'] + values['D9'] + values['E1'] + values['E2'] + values['E3'] + values['E4'] + values['E5'] + values['E6'] + values['E7'] + values['E8'] + values['E9'] + values['F1'] + values['F2'] + values['F3'] + values['F4'] + values['F5'] + values['F6'] + values['F7'] + values['F8'] + values['F9'] + values['G1'] + values['G2'] + values['G3'] + values['G4'] + values['G5'] + values['G6'] + values['G7'] + values['G8'] + values['G9'] + values['H1'] + values['H2'] + values['H3'] + values['H4'] + values['H5'] + values['H6'] + values['H7'] + values['H8'] + values['H9'] + values['I1'] + values['I2'] + values['I3'] + values['I4'] + values['I5'] + values['I6'] + values['I7'] + values['I8'] + values['I9']
+    return string
