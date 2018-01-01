@@ -123,6 +123,6 @@ def generate_puzzle(n, partition_function=random_partition):
     return label_map, sol
 
 if __name__ == '__main__':
-    label_map, sol = generate_puzzle(7)
+    label_map, sol = generate_puzzle(6)
     print("partition label map:\n", label_map)
     print("one solution:\n", sol)
