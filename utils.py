@@ -2,6 +2,7 @@ import copy
 
 rows = 'ABCDEFGHI'
 cols = '123456789'
+node_counter = 0
 
 #For pygame visualizations
 assignments = []
@@ -47,7 +48,7 @@ def grid_values(grid):
     for c in grid:
         if c in digits:
             chars.append(c)
-        if c == '0':
+        if c == '.':
             chars.append(digits)
     #print(len(chars))
     assert len(chars) == 81
@@ -138,11 +139,14 @@ def reduce_puzzle(values):
     return values
 
 def search(values):
-
+    
+    global node_counter
+    node_counter += 1
     values = reduce_puzzle(values)
     if values is False:
         return False
     if all(len(values[s]) == 1 for s in boxes):
+        print(node_counter)
         return values
 
     square = 'To find'
@@ -171,7 +175,7 @@ def search(values):
         sudokus[count][square] = digit
         assign_value(values, square, digit)
         count = count + 1
-
+            
     for sudoku in sudokus:
         new_sudoku = copy.deepcopy(sudoku)
         attempt = search(new_sudoku)
