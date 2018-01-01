@@ -133,16 +133,21 @@ def reduce_puzzle(values):
         values = naked_twins(values)
         values = only_choice(values)
         solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
+        uncertain = 0
+        for box in values.keys():
+            uncertain += len(values[box])
+        uncertain -= 81
         stalled = solved_values_before == solved_values_after
         if len([box for box in values.keys() if len(values[box]) == 0]):
-            return False
-    return values
+            return False, 1000000
+    return values, uncertain
 
 def search(values):
     
     global node_counter
     node_counter += 1
-    values = reduce_puzzle(values)
+    values, current_uncertain = reduce_puzzle(values)
+    print(current_uncertain)
     if values is False:
         return False
     if all(len(values[s]) == 1 for s in boxes):
