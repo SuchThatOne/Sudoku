@@ -131,7 +131,7 @@ Our algorithm also used for larger or irregular puzzles, but there are few corre
 
 Here are multiple criterions that can be used to measure the performances of Sudoku algorithms, and we choose two simple criterions to compare our proposed algorithm with the already-known one:
 \begin{enumerate}
-	\item Average time consumed to solve one puzzle. Obviously this is an intuitive measure for performance and can reflect how well an algorithm works in practice. However, this criterion also depends on how to implemente the algorithm and which machine the program is running on.
+	\item Average time consumed to solve one puzzle. Obviously this is an intuitive measure for performance and can reflect how well an algorithm works in practice. However, this criterion also depends on how to implement the algorithm and which machine the program is running on.
 	\item The number of node explored in the search procedure. This criterion is independent of specific implementation and could reflect goodness of our heuristic function. But this measure ignores the cost of calculating heuristic function, so that an aggressive heuristic that explores less nodes may cost much more time in practice.
 \end{enumerate}
 
@@ -156,14 +156,14 @@ We are going to develop some new algorithms to speed up the solving process. Bas
 
 
 \section{Advanced Variation}
-In the search process we need guess the number in every blank box to proceed. Here the right choice, or reasonable attempt priority is very important to our solver, which can help us find a feasible solution much faster. Therefore, a reasonable and novel heuristic function, instead of simple natural number order, is a very good tool to decide the order of trial. For now we use a specially designed heuristic function to speed up our search. Basically, this heuristic function is calculated by summing over the number of possible values in each cell and then minus the number of cells. It is easy to see that a valid solution is reached if and only if the heuristics function is exactly zero.  The intuition behind the defintion of heuristics function is that when the function value is a small non-negative integer then the further search procedure from this state would be relatively quick since the braches in search tree from that state would be rather sparse. However, sometimes there may be no valid number that can be put into some cell. In this case we let the heuristics function be infinity.
+In the search process we need guess the number in every blank box to proceed. Here the right choice, or reasonable attempt priority is very important to our solver, which can help us find a feasible solution much faster. Therefore, a reasonable and novel heuristic function, instead of simple natural number order, is a very good tool to decide the order of trial. For now we use a specially designed heuristic function to speed up our search. Basically, this heuristic function is calculated by summing over the number of possible values in each cell and then minus the number of cells. It is easy to see that a valid solution is reached if and only if the heuristics function is exactly zero.  The intuition behind the definition of heuristics function is that when the function value is a small non-negative integer then the further search procedure from this state would be relatively quick since the branches in search tree from that state would be rather sparse. However, sometimes there may be no valid number that can be put into some cell. In this case we let the heuristics function be infinity. There is a trade-off between the big and small heuristics function value. The bigger function value, the more complicated situation we will face with. The less function value, the more chance that it will end up as an unfeasible case. We want to set a reasonable threshold value, which has much to do with the number of cells not assigned. We set part of the $9\time9$ Sudoku dataset as "training set", and use this set to adjust the threshold value manually. Then use another dataset as our test set.
 
 Moreover, we will also try to solve Sudoku with bigger size. The advantage of implementing heuristic function will be more significant with the growth of the size. We will also try to solve for Sudoku with irregular cells. The performance of the new algorithm can be measured by the time it consumes to solve the testing set problems, compared to that consumed by the simple back tracing solver. This evaluation also involves the design of larger Sudoku, since this data set is hard to find on the Internet.
 
 \section{Experiment Results}
-Now we have completed the basic back tracing algorithm (which can be seen in util.py). We can run the python file and type the input ($n^2$ numbers for normal $n\times n$ Sudoku Puzzle where $n$ is a complete square number), and then we can get one of its solotions. This algorithm will also use some other novel tricks, and will be generalized to a more universal solver so that we can solve the Sudoku Puzzle with irregular blocks.
+Now we have completed the basic back tracing algorithm (which can be seen in util.py). We can run the python file and type the input ($n^2$ numbers for normal $n\times n$ Sudoku Puzzle where $n$ is a complete square number), and then we can get one of its solutions. This algorithm will also use some other novel tricks, and will be generalized to a more universal solver so that we can solve the Sudoku Puzzle with irregular blocks.
 
-The following are some comparisons between the known algorithm and ours. We ran our solver on 20 very hard  9×9 Sudoku puzzles and five 16x16 Sudoku puzzles, which are chosen as test data (differ from the data to adjust the Heuristic.)
+The following are some comparisons between the known algorithm and ours. We ran our solver on 20 very hard  9×9 Sudoku puzzles and five 16x16 Sudoku puzzles, which are chosen as test data (differ from the data to adjust the Heuristic.) The basic solver is the Sudoku solver using backtracing algorithm, without minimum remaining values ordering in cells exploration and lexicographical order in digit choice. The simple heuristic solver uses simple minimum constraining ordering.
 
 \begin{table}[h]
 	\centering
@@ -173,7 +173,9 @@ The following are some comparisons between the known algorithm and ours. We ran 
 	\hline
 	Basic Solver & 2872 & 2536\\
 	\hline
-	Heuristic Solver & 2164 & 1872\\
+	Simple Heuristic Solver & 2197 & 1728\\
+	\hline
+	Our Heuristic Solver & 2164 & 1872\\
 	\hline
 \end{tabular}
 \caption{The number of expanded nodes for different solvers}
@@ -187,7 +189,9 @@ The following are some comparisons between the known algorithm and ours. We ran 
 		\hline
 		Basic Solver & 8428 & 33039\\
 		\hline
-		Heuristic Solver & 6012 & 24713\\
+		Simple Heuristic Solver & 6173 & 26651\\
+		\hline	
+		Our Heuristic Solver & 6012 & 24713\\
 		\hline
 	\end{tabular}
 \caption{The time used to solve hard puzzles for different solvers (in ms)}
