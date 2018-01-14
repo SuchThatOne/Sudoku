@@ -139,7 +139,7 @@ def reduce_puzzle(values):
         uncertain -= 81
         stalled = solved_values_before == solved_values_after
         if len([box for box in values.keys() if len(values[box]) == 0]):
-            return False, 1000000
+            return None, 1000000
     return values, uncertain
 
 def search(values):
