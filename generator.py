@@ -66,7 +66,7 @@ def random_partition(n):
             block_list.append(new_block)
             # visualize_blocks(n, block_list)
         else:
-            while random.random() < 0.5 and len(block_list) > 0:
+            while random.random() < 0.1 and len(block_list) > 0:
                 remove_block()
     return block_list
 
@@ -84,6 +84,8 @@ def normal_partition(n):
             block_list.append(new_block)
     return block_list
 
+max_x, max_y = 0, 0
+
 def generate_puzzle(n, partition_function=random_partition):
     block_list = partition_function(n)
     label_map = np.zeros([n,n], np.int)
@@ -91,6 +93,7 @@ def generate_puzzle(n, partition_function=random_partition):
         for x,y in block:
             label_map[x,y] = i
     sol = np.zeros([n,n], np.int)
+    print(label_map)
 
     def check(x,y):
         for i in range(x):
@@ -103,8 +106,11 @@ def generate_puzzle(n, partition_function=random_partition):
             if (i<x or i==x and j<y) and sol[x,y] == sol[i,j]:
                 return False
         return True
-
     def trivial_search(x, y):
+        global max_x, max_y
+        if x > max_x or x == max_x and y > max_y:
+            max_x, max_y = x, y
+            print(max_x, max_y)
         if x >= n:
             return True
         for v in random.sample(range(n),n):
@@ -123,6 +129,6 @@ def generate_puzzle(n, partition_function=random_partition):
     return label_map, sol
 
 if __name__ == '__main__':
-    label_map, sol = generate_puzzle(9)
+    label_map, sol = generate_puzzle(12)
     print("partition label map:\n", label_map)
     print("one solution:\n", sol)
