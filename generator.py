@@ -1,6 +1,8 @@
 import numpy as np
 import random
 from math import sqrt
+import threading
+import time
 
 neighborhood = [(1,0),(-1,0),(0,1),(0,-1)]
 
@@ -14,9 +16,10 @@ def visualize_blocks(n, block_list):
             label_map[x,y] = i+1
     print(label_map)
 
-def random_partition(n):
+def random_partition(n, timeout=1e8):
     used = np.zeros([n, n], np.bool)
     block_list = []
+    start_time = time.time()
 
     def check():
         used_true = np.zeros([n, n], np.bool)
@@ -52,6 +55,9 @@ def random_partition(n):
             used[x, y] = False
 
     while len(block_list) < n:
+        if time.time()-start_time > timeout:
+            return None
+
         var_x, var_y = -1, -1
         for i in range(n):
             for j in range(n):
@@ -70,7 +76,7 @@ def random_partition(n):
                 remove_block()
     return block_list
 
-def normal_partition(n):
+def normal_partition(n, timeout=1e8):
     block_list = []
     m = int(sqrt(n))
     if m*m != n:
@@ -85,15 +91,23 @@ def normal_partition(n):
     return block_list
 
 max_x, max_y = 0, 0
+found = False
+label_map_g, sol_g = None, None
 
-def generate_puzzle(n, partition_function=random_partition):
-    block_list = partition_function(n)
+def generate_puzzle(n, partition_function=random_partition, timeout1=1e8, timeout2=1e8):
+    global found, label_map_g, sol_g
+
+    block_list = partition_function(n, timeout=timeout1)
+    if block_list == None:
+        return None
     label_map = np.zeros([n,n], np.int)
     for i, block in enumerate(block_list):
         for x,y in block:
             label_map[x,y] = i
     sol = np.zeros([n,n], np.int)
-    print(label_map)
+
+    start_time = time.time()
+    # print(label_map)
 
     def check(x,y):
         for i in range(x):
@@ -108,9 +122,11 @@ def generate_puzzle(n, partition_function=random_partition):
         return True
     def trivial_search(x, y):
         global max_x, max_y
+        if found or time.time()-start_time > timeout2:
+            return False
         if x > max_x or x == max_x and y > max_y:
             max_x, max_y = x, y
-            print(max_x, max_y)
+            # print(max_x, max_y)
         if x >= n:
             return True
         for v in random.sample(range(n),n):
@@ -126,9 +142,25 @@ def generate_puzzle(n, partition_function=random_partition):
 
     if not trivial_search(0,0):
         return None
+
+    label_map_g = label_map
+    sol_g = sol
+    found = True
     return label_map, sol
 
+def quick_random_generate(n):
+    threads = []
+    global label_map_g
+    while label_map_g is None:
+        threads.append(threading.Thread(target=generate_puzzle, args=(n,random_partition,2,4)))
+        threads[-1].start()
+        threads.append(threading.Thread(target=generate_puzzle, args=(n,random_partition,2,4)))
+        threads[-1].start()
+        threads[-2].join()
+        threads[-1].join()
+        # print(len(threads))
+
 if __name__ == '__main__':
-    label_map, sol = generate_puzzle(12)
-    print("partition label map:\n", label_map)
-    print("one solution:\n", sol)
+    quick_random_generate(9)
+    print("partition label map:\n", label_map_g)
+    print("one solution:\n", sol_g)

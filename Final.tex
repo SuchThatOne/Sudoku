@@ -11,10 +11,11 @@
 \usepackage{graphicx,float,wrapfig}
 \usepackage{dsfont}
 \usepackage{subfigure}
+\usepackage{hyperref}
 \newcommand{\Class}{Artificial Intelligence}
 
 % Homework Specific Information. Change it to your own
-\newcommand{\Title}{Final Report}
+\newcommand{\Title}{Heuristic Solver for Various Sudoku}
 
 % In case you need to adjust margins:
 \topmargin=-0.45in      %
@@ -97,34 +98,54 @@
 Sudoku, originally called Number Place, is a logic-based, combinatorial number-placement puzzle. The objective is to fill a $ 9\times9 $ grid with digits so that each column, each row, and each of the nine $ 3\times3 $ subgrids that compose the grid (also called "boxes", "blocks", or "regions") contains all of the digits from 1 to 9. The Figure \ref{Fig:NormalSudoku} gives an example of normal Sudoku Game. The puzzle setter provides a partially completed grid, which for a well-posed puzzle has a single solution. Completed games are always a type of Latin square with an additional constraint on the contents of individual regions. For example, the same single integer may not appear twice in the same row, column, or any of the nine $ 3\times3 $ subregions of the $ 9\times9 $ playing board.
 
 \begin{figure}[h]
-	\label{Fig:NormalSudoku}
 	\centering
 	\includegraphics[width=150pt]{pic1.png}
 	\hspace{30pt}
 	\includegraphics[width=150pt]{pic2.png}
 	\caption{Example of a Normal Sudoku Puzzle and its Solution}
+	\label{Fig:NormalSudoku}
 \end{figure}
 
 In this project we want to design an AI engine to play Sudoku game. The Sudoku will not only be the classic $ 9\times9 $ playing board, but also bigger size Sudoku and Sudoku with irregular cells, by introducing new algorithms. Figure \ref{FIg:IrregSudoku} provides an example of an irregular Sudoku Puzzle.
-\begin{figure}[h]
-	\label{FIg:IrregSudoku}
+\begin{figure}[h!]
 	\centering
 	\includegraphics[width=150pt]{pic3.png}
 	\hspace{30pt}
 	\includegraphics[width=150pt]{pic4.png}
 	\caption{Example of an Irregular Sudoku Puzzle and its Solution}
+	\label{FIg:IrregSudoku}
 \end{figure}
 
 \section{Infrastructure}
-First of all, to test the perfomance of Sudoku algorithms for normal $9\times 9$ Sudoku games, we run our proposed algorithm and the trivial trackback algorithm on the open $9\times 9$ Sudoku dataset \cite{}, which includes one million puzzles and each of them has exactly one solution.
+First of all, to test the perfomance of Sudoku algorithms for normal $9\times 9$ Sudoku games, we run our proposed algorithm and the trivial trackback algorithm on the open $9\times 9$ Sudoku dataset \cite{kaggle}, which includes one million puzzles and each of them has exactly one solution.
 
-Our algorithm also used for larger or irregular puzzles, but there are few corresponding open large dataset. Hence we wrote our own generater to generate irregular puzzles of arbitrary size and test the algorithms on these generated puzzles. However, it is hard to gurantee each generated puzzle has only one solutions when generating very large puzzles.
+Our algorithm also used for larger or irregular puzzles, but there are few corresponding open large dataset. Hence we wrote our own generater to generate irregular puzzles of arbitrary size and test the algorithms on these generated puzzles (see Fig \ref{Fig:GenIrreg}). However, it is hard to gurantee each generated puzzle has only one solutions when generating very large puzzles.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics{pic5.png}
+	\includegraphics{pic6.png}
+	\caption{Generated Irregular Puzzle}
+	\label{Fig:GenIrreg}
+\end{figure}
 
 Here are multiple criterions that can be used to measure the performances of Sudoku algorithms, and we choose two simple criterions to compare our proposed algorithm with the already-known one:
 \begin{enumerate}
 	\item Average time consumed to solve one puzzle. Obviously this is an intuitive measure for performance and can reflect how well an algorithm works in practice. However, this criterion also depends on how to implemente the algorithm and which machine the program is running on.
-	\item The number of node explored in the search procedure. This citerion is independent of specific implementation and could reflect goodness of our heuristic function. But this measure ignores the cost of calculating heuristic function, so that an aggressive heuristic that explores less nodes may cost much more time in practice.
+	\item The number of node explored in the search procedure. This criterion is independent of specific implementation and could reflect goodness of our heuristic function. But this measure ignores the cost of calculating heuristic function, so that an aggressive heuristic that explores less nodes may cost much more time in practice.
 \end{enumerate}
+
+\section{Literature review}
+
+Various algorithms have been implemented to solve the Sudoku problem \cite{sspr}. A logic-based algorithm, mimicking the way a human would solve the puzzle, is adequate to attain a solution. Harder puzzles, where guessing is required, can be solved using backtracking algorithms \cite{sspr}. The problem with back tracking is that the efficiency of the algorithm is dependent on the number of guesses required to solve the puzzle \cite{tj}. A solution to this problem could lie in using stochastic optimization techniques.
+
+Some work has been done on solving Sudoku using stochastic optimization techniques [2-4]. The primary motivation behind using these techniques is that difficult puzzles can be solved as efficiently as simple puzzles. This is due to the fact that the solution space is searched stochastically until a suitable solution is found \cite{tj}. Hence, the puzzle does not have to be logically solvable or easy for a solution to be reached efficiently.
+
+Furthermore, stochastic optimization techniques are used to find the global optimum of a problem which contains many local optima \cite{aj}. Due to the constraint nature of Sudoku, it is very likely to find a solution which satisfies some of the constraints but not all of them, hence finding a local optimum. Due to the stochastic nature of these techniques, the solution space is still searched even though a local optimum has been found, allowing for the global optimum to be detected.
+
+Another solution is to improve the exploration process so that we can find a feasible solution before expanding too much nodes. Therefore, a well-designed heuristic function is very important to our exploration process. A brute force algorithm visits the empty cells in some order, filling in digits sequentially, or backtracking when the number is found to be not valid \cite{bt}. Minimum Remaining Values ordering is proposed when faced with the decision on what order should its cells be explored \cite{rl}. However, when faced with which value should be tried first in a cell, most solvers just use lexicographical order to decide it. Similar to the order of cell exploration, Minimum Remaining Values ordering is also considered to work well in this choice \cite{rl}, but the definition of this heuristic is not very clear. This part can be improved a lot.
+
+Some other work has been done on reducing Sudoku puzzle to graph coloring problems, or more often an exact cover problem. Then they want to use Knuth’s elegant Dancing Links algorithm (DLX) \cite{dlx}. However, this technique is not very direct to the origin puzzle and the efficiency is restricted by the DLX algorithm. Thus, we do not consider this algorithm.
 
 
 \section{Algorithm Description}
@@ -135,21 +156,63 @@ We are going to develop some new algorithms to speed up the solving process. Bas
 
 
 \section{Advanced Variation}
-In the search process we need guess the number in every blank box to proceed. Here the right choice, or reasonable attempt priority is very important to our solver, which can help us find a feasible solution much faster. Therefore, a reasonable and novel heuristic function, instead of simple natural number order, is a very good tool to decide the order of trial. For now we use a specially designed heuristic function to speed up our search. Basically, this heuristics function is calculated by summing over the number of possible values in each cell and then minus the number of cells. It is easy to see that a valid solution is reached if and only if the heuristics function is exactly zero.  The intuition behind the defintion of heuristics function is that when the function value is a small non-negative integer then the further search procedure from this state would be relatively quick since the braches in search tree from that state would be rather sparse. However, sometimes there may be no valid number that can be put into some cell. In this case we let the heuristics function be infinity.
+In the search process we need guess the number in every blank box to proceed. Here the right choice, or reasonable attempt priority is very important to our solver, which can help us find a feasible solution much faster. Therefore, a reasonable and novel heuristic function, instead of simple natural number order, is a very good tool to decide the order of trial. For now we use a specially designed heuristic function to speed up our search. Basically, this heuristic function is calculated by summing over the number of possible values in each cell and then minus the number of cells. It is easy to see that a valid solution is reached if and only if the heuristics function is exactly zero.  The intuition behind the defintion of heuristics function is that when the function value is a small non-negative integer then the further search procedure from this state would be relatively quick since the braches in search tree from that state would be rather sparse. However, sometimes there may be no valid number that can be put into some cell. In this case we let the heuristics function be infinity.
 
 Moreover, we will also try to solve Sudoku with bigger size. The advantage of implementing heuristic function will be more significant with the growth of the size. We will also try to solve for Sudoku with irregular cells. The performance of the new algorithm can be measured by the time it consumes to solve the testing set problems, compared to that consumed by the simple back tracing solver. This evaluation also involves the design of larger Sudoku, since this data set is hard to find on the Internet.
 
 \section{Experiment Results}
 Now we have completed the basic back tracing algorithm (which can be seen in util.py). We can run the python file and type the input ($n^2$ numbers for normal $n\times n$ Sudoku Puzzle where $n$ is a complete square number), and then we can get one of its solotions. This algorithm will also use some other novel tricks, and will be generalized to a more universal solver so that we can solve the Sudoku Puzzle with irregular blocks.
 
-\vspace{2.5ex}
-\noindent
+The following are some comparisons between the known algorithm and ours. We ran our solver on 20 very hard  9×9 Sudoku puzzles and five 16x16 Sudoku puzzles, which are chosen as test data (differ from the data to adjust the Heuristic.)
+
+\begin{table}[h]
+	\centering
+\begin{tabular}{|c|c|c|}
+	\hline
+	Solver & $9\times 9$ & $16\times 16$\\
+	\hline
+	Basic Solver & 2872 & 2536\\
+	\hline
+	Heuristic Solver & 2164 & 1872\\
+	\hline
+\end{tabular}
+\caption{The number of expanded nodes for different solvers}
+\end{table}
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		Solver & $9\times 9$ & $16\times 16$\\
+		\hline
+		Basic Solver & 8428 & 33039\\
+		\hline
+		Heuristic Solver & 6012 & 24713\\
+		\hline
+	\end{tabular}
+\caption{The time used to solve hard puzzles for different solvers (in ms)}
+\end{table}
+
+
+\begin{figure}[h!]
+\centering
 \includegraphics[height=6.5cm]{example}
+\caption{A usage example of our program on some normal $9\time9$ Sudoku Puzzle}
+\end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Begin edit from here
 
 % End edit to here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{}
+	\bibitem[1]{sspr} G. Santos-García and M. Palomino. Solving Sudoku Puzzles with Rewriting Rules. Electronic Notes in Theoretical Computer Science, 17(4), 79-93.
+	\bibitem[2]{tj}T. Mantere and J. Koljonen. Solving and Rating Sudoku Puzzles using Genetic Algorithms. Proceeding of the IEEE Congress on Evolutionary Computation, 1382-1389.
+	\bibitem[3]{rl}R. Lewis. Metaheuristics can Solve Sudoku Puzzles. Journal of Heuristics Archive, 13(4), 387-401.
+	\bibitem[4]{aj}A. Moraglio and J. Togelius. Geometric Particle Swarm Optimization for Sudoku Puzzles. Webpage: http://julian.togelius.com/Moraglio2007Geometric.pdf.
+	\bibitem[5]{dlx}Knuth, Donald. "Dancing links". Millennial Perspectives in Computer Science. P159. 187. arXiv:cs/0011047 Freely accessible.
+	\bibitem[6]{bt}Norvig, Peter. "Solving Every Sudoku Puzzle". Peter Norvig (personal website). Archived from the original on 20 Oct 2016.
+	\bibitem[7]{kaggle}\href{https://www.kaggle.com/bryanpark/sudoku}{"1 Million Numpy Array Pairs of Sudoku Games and Solutions"}
+\end{thebibliography}
 
 \end{spacing}
 \end{document}
