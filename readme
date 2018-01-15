@@ -1,12 +1,23 @@
+Instruction to this code.
+
+
+main.py: The entrance of our solver. 
+
+Run	 
+	python main.py
+in terminal to run the code. We just consider input and output in main.py. You can re-comment part of the code to implement different functions. The default code will lead you running our algorithm on the 9X9 test set. Test performance of algorithms implemented in util.py on datasets.
+
+
 utils.py: Implemented some functions used to solve Sudoku Puzzles.
-    search(values): Search for one solution for the Sudoku Puzzle given the domain of each cell.
+    
+	search(values): Search for one solution for the Sudoku Puzzle given the domain of each cell, where we implemented our heuristic function.
     reduce(values): Use puzzle constraints to reduce the domains of cells. The reduction is performed in place.
     grid_values(grid): Change the original Sudoku problem grid into domain-form constraints that is used in search produce.
     eliminate(values), only_choice(values), naked_twins(values): Specific reduction operations.
+	We also have the node counter in this part.
 
-
-main.py: Test performance of algorithms implemented in util.py on datasets.
 
 generator.py: Generate irregular-cell Sudoku Puzzles.
-    generate_puzzle(n, partition_function, timeout1, timeou2): First generate irregular partition on board and then calculate one possible solution. Since at times we cannot find a solution within reasonable time if the partition is bad, timeout parameters are set.
+    
+	generate_puzzle(n, partition_function, timeout1, timeou2): First generate irregular partition on board and then calculate one possible solution. Since at times we cannot find a solution within reasonable time if the partition is bad, timeout parameters are set.
     quick_random_generate(n): Return an irregular-cell Sudoku Puzzles of given order n. The partition is stored in global variable label_map_g while one possible solution is in sol_g.

@@ -2,6 +2,11 @@ import copy
 
 rows = 'ABCDEFGHI'
 cols = '123456789'
+
+# recomment this part for 16X16 sudoku
+# rows = 'ABCDEFGHIJKLMNOP'
+# cols = '1234567890abcdef'
+
 node_counter = 0
 
 #For pygame visualizations
@@ -36,6 +41,8 @@ boxes = cross(rows, cols)
 row_units = [cross(r, cols) for r in rows]
 column_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','456','789')]
+# Or input your special square here to square_units. 
+
 unitlist = row_units + column_units + square_units
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
@@ -139,7 +146,7 @@ def reduce_puzzle(values):
         uncertain -= 81
         stalled = solved_values_before == solved_values_after
         if len([box for box in values.keys() if len(values[box]) == 0]):
-            return None, 1000000
+            return False, 1000000
     return values, uncertain
 
 def search(values):
@@ -147,7 +154,7 @@ def search(values):
     global node_counter
     node_counter += 1
     values, current_uncertain = reduce_puzzle(values)
-    print(current_uncertain)
+    # print(current_uncertain)  # the novel heuristic
     if values is False:
         return False
     if all(len(values[s]) == 1 for s in boxes):
