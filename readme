@@ -1,0 +1,12 @@
+utils.py: Implemented some functions used to solve Sudoku Puzzles.
+    search(values): Search for one solution for the Sudoku Puzzle given the domain of each cell.
+    reduce(values): Use puzzle constraints to reduce the domains of cells. The reduction is performed in place.
+    grid_values(grid): Change the original Sudoku problem grid into domain-form constraints that is used in search produce.
+    eliminate(values), only_choice(values), naked_twins(values): Specific reduction operations.
+
+
+main.py: Test performance of algorithms implemented in util.py on datasets.
+
+generator.py: Generate irregular-cell Sudoku Puzzles.
+    generate_puzzle(n, partition_function, timeout1, timeou2): First generate irregular partition on board and then calculate one possible solution. Since at times we cannot find a solution within reasonable time if the partition is bad, timeout parameters are set.
+    quick_random_generate(n): Return an irregular-cell Sudoku Puzzles of given order n. The partition is stored in global variable label_map_g while one possible solution is in sol_g.
